@@ -80,13 +80,18 @@
     <button onclick="goGalaga()">갤러그 게임</button>
 </div>
 
+<!-- 👇 회원가입/로그인 버튼 추가 -->
+<div style="margin-top:20px;">
+    <button onclick="goSignup()">회원가입</button>
+    <button onclick="goLogin()">로그인</button>
+</div>
+
 <img id="goose" src="goose.jpg" alt="거위" />
 
 <audio id="jokbal" src="https://raw.githubusercontent.com/yoonjaekoo/koo1331207/main/%EC%9E%A5%EC%B6%A9%EB%8F%99%20%EC%99%95%EC%A1%B1%EB%B0%9C%20%EB%B3%B4%EC%8C%88.mp3"></audio>
 
 <p>초록색 입체 그리드-solved.ac 배경 훔쳐옴</p>
 <button onclick="goAbout()">About 페이지로 이동</button>
-
 
 <img id="scary" src="toothless.gif" alt="투슬리스" />
 
@@ -98,6 +103,10 @@
     function go5() { window.location.href = "wordchaingame.html"; }
     function goAbout() { window.location.href = "about.html"; }
     function goGalaga() { window.location.href = "galaga.html"; }
+
+    // 👇 새로 추가
+    function goSignup() { window.location.href = "signup.html"; }
+    function goLogin() { window.location.href = "login.html"; }
 
     const goose = document.getElementById('goose');
     const jokbal = document.getElementById('jokbal');
