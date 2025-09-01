@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>로그인</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #ee0979, #ff6a00);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+            color: white;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            width: 350px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: 600;
+            color: white;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 12px;
+            border: none;
+            font-size: 14px;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(45deg, #ee0979, #ff6a00);
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        p {
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+
+        a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h2>로그인</h2>
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="이메일" required>
+            <input type="password" id="pw" placeholder="비밀번호" required>
+            <button type="submit">로그인</button>
+        </form>
+        <p>아직 계정이 없나요? <a href="signup.html">회원가입</a></p>
+        <p id="msg"></p>
+    </div>
+
+    <script>
+        const scriptURL = "https://script.google.com/macros/s/AKfycbyqmjFYspx7x16cWpPpYtpjlTYO47a4ju_o2b6onqL_Czy_kw5EbijDkCfvazL5JTpLTg/exec";
+        const form = document.getElementById("loginForm");
+        const msg = document.getElementById("msg");
+
+        form.addEventListener("submit", e => {
+            e.preventDefault();
+            const data = new FormData(form);
+            data.append("mode", "login");
+            fetch(scriptURL, {
+                    method: "POST",
+                    body: data
+                })
+                .then(res => res.text())
+                .then(text => {
+                    if (text === "FAIL") msg.textContent = "로그인 실패 ❌";
+                    else {
+                        sessionStorage.setItem("auth", "true");
+                        const user = JSON.parse(text);
+                        sessionStorage.setItem("nickname", user.nickname);
+                        alert(user.nickname + "님 환영합니다! 관리자:" + user.isAdmin);
+                        window.location.href = "index.html";
+                    }
+                })
+                .catch(err => {
+                    msg.textContent = "오류 발생 ❌";
+                });
+        });
+    </script>
+</body>
+
+</html>
