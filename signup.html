@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
     <meta charset="UTF-8">
-    <title>회원가입</title>
+    <title>로그인</title>
     <style>
         body {
             display: flex;
@@ -11,7 +10,7 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background: linear-gradient(135deg, #007aff, #00c6ff);
+            background: linear-gradient(135deg, #ee0979, #ff6a00);
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
             color: white;
         }
@@ -49,7 +48,7 @@
             margin-top: 15px;
             border: none;
             border-radius: 12px;
-            background: linear-gradient(45deg, #00c6ff, #0072ff);
+            background: linear-gradient(45deg, #ee0979, #ff6a00);
             color: white;
             font-size: 16px;
             cursor: pointer;
@@ -71,48 +70,73 @@
             text-decoration: none;
             font-weight: 600;
         }
+
+        .msg-success {
+            color: #34c759;
+            font-weight: bold;
+        }
+        
+        .msg-error {
+            color: #ff3b30;
+            font-weight: bold;
+        }
     </style>
 </head>
 
 <body>
     <div class="card">
-        <h2>회원가입</h2>
-        <form id="signupForm">
-            <input type="email" id="email" placeholder="이메일" required>
-            <input type="password" id="pw" placeholder="비밀번호" required>
-            <input type="text" id="nickname" placeholder="닉네임" required>
-            <button type="submit">가입하기</button>
+        <h2>로그인</h2>
+        <form id="loginForm">
+            <input type="email" id="email" name="email" placeholder="이메일" required>
+            <input type="password" id="pw" name="pw" placeholder="비밀번호" required>
+            <button type="submit">로그인</button>
         </form>
-        <p>이미 계정이 있나요? <a href="login.html">로그인</a></p>
+        <p>아직 계정이 없나요? <a href="signup.html">회원가입</a></p>
         <p id="msg"></p>
     </div>
 
     <script>
         const scriptURL = "https://script.google.com/macros/s/AKfycbyqmjFYspx7x16cWpPpYtpjlTYO47a4ju_o2b6onqL_Czy_kw5EbijDkCfvazL5JTpLTg/exec";
-        const form = document.getElementById("signupForm");
+        const form = document.getElementById("loginForm");
         const msg = document.getElementById("msg");
 
         form.addEventListener("submit", e => {
             e.preventDefault();
             const data = new FormData(form);
-            data.append("mode", "signup");
+            data.append("mode", "login");
+            msg.textContent = "";
+            
             fetch(scriptURL, {
-                    method: "POST",
-                    body: data
-                })
-                .then(res => res.text())
-                .then(text => {
-                    if (text === "EXIST") msg.textContent = "이미 존재하는 이메일입니다 ❌";
-                    else {
-                        msg.textContent = "가입 완료 ✅";
-                        form.reset();
-                    }
-                })
-                .catch(err => {
-                    msg.textContent = "오류 발생 ❌";
-                });
+                method: "POST",
+                body: data
+            })
+            .then(res => res.text())
+            .then(text => {
+                if (text === "FAIL") {
+                    msg.textContent = "로그인 실패 ❌";
+                    msg.className = "msg-error";
+                } else {
+                    const user = JSON.parse(text);
+                    // 닉네임과 isAdmin 상태를 JSON 문자열로 변환하여 세션 스토리지에 저장
+                    sessionStorage.setItem("user", JSON.stringify({
+                        nickname: user.nickname,
+                        isAdmin: user.isAdmin
+                    }));
+                    
+                    msg.textContent = user.nickname + "님 환영합니다! 관리자: " + user.isAdmin;
+                    msg.className = "msg-success";
+                    
+                    // 1.5초 후 페이지 이동
+                    setTimeout(() => {
+                        window.location.href = "index.html";
+                    }, 1500);
+                }
+            })
+            .catch(err => {
+                msg.textContent = "오류 발생 ❌";
+                msg.className = "msg-error";
+            });
         });
     </script>
 </body>
-
 </html>
